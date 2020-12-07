@@ -50,7 +50,7 @@ class Gameboard:
 
                 grid.append([column_coordinate, row_coordinate])
 
-        print("Matrix of the grid:\n", grid)
+        # print("Matrix of the grid:\n", grid)
         return grid
 
 Gameboard()
