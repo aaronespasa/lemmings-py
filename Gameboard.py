@@ -3,14 +3,13 @@ Create a matrix representation of the grid
 and create the scoreboard with its values
 """
 
-
 class Gameboard:
     def __init__(self):
         # DIMENSIONS:
         self.width = 256
         self.height = 256
-        self.grid_rows = 16
-        self.grid_columns = 14
+        self.grid_rows = 14
+        self.grid_columns = 16
         self.cell_size = self.height / self.grid_columns  # 16px
         self.score = 0
 
@@ -43,13 +42,15 @@ class Gameboard:
         :return list: grid of size grid_rows x grid_columns
         """
         grid = []
-        for column in range(grid_columns):
-            for row in range(grid_rows):
-                row_coordinate = self.cell_size * row
-                # Using (column + 2) we avoid overlapping
-                # the grid and the scoreboard
-                column_coordinate = self.cell_size * (column + 2)
-                grid.append([row_coordinate, column_coordinate])
+        for row in range(grid_rows):
+            for column in range(grid_columns):
+                # (row + 2) avoid overlapping the grid and the scoreboard
+                row_coordinate = self.cell_size * (row + 2)
+                column_coordinate = self.cell_size * column
+
+                grid.append([column_coordinate, row_coordinate])
 
         print("Matrix of the grid:\n", grid)
         return grid
+
+Gameboard()
