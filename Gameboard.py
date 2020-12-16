@@ -1,8 +1,8 @@
 """
-Create a matrix representation of the grid
-and create the scoreboard with its values
+Create a matrix representation of the grid.
+This grid will be useful to the user to
+interact with the game.
 """
-
 class Gameboard:
     def __init__(self):
         # DIMENSIONS:
@@ -11,11 +11,10 @@ class Gameboard:
         self.grid_rows = 14
         self.grid_columns = 16
         self.cell_size = self.height / self.grid_columns  # 16px
-        self.score = 0
 
         # COLORS
-        self.white = 7
-        self.dark_blue = 1
+        self.WHITE = 7
+        self.DARK_BLUE = 1
 
         # REPRESENTATION OF THE SCOREBOARD AND THE GRID
         self.scoreboard = {
@@ -23,9 +22,15 @@ class Gameboard:
             "y": 0,
             "width": self.width,
             "height": self.cell_size * 2,
-            "text": f"Score: {self.score}",
-            "bgcolor": self.dark_blue,
-            "textcolor": self.white
+            "bgcolor": self.DARK_BLUE,
+            "textcolor": self.WHITE,
+            "level": "",
+            "alive": "",
+            "saved": "",
+            "died": "",
+            "ladders": "",
+            "umbrellas": "",
+            "blockers": ""
         }
         # The grid does not include the scoreboard
         self.grid = self.create_grid(

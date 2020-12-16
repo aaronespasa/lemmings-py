@@ -1,10 +1,23 @@
-class Player():
-    total_lemmings: int
+from random import randint
+
+class Player:
+    def __init__(self, entry_gate, exit_gate):
+        self.entry_gate = entry_gate
+        self.exit_gate = exit_gate
+        self.players = []
+        self.player_stats = {
+            "x": self.entry_gate["x"],
+            "y": self.entry_gate["y"],
+            "alive": True
+        }
+        self.players_num = randint(10, 20)
+        for _ in range(self.players_num):
+            self.players.append(self.player_stats)
+        
 
     def create_player(self):
         """Assign it a position"""
-        x: int
-        y: int 
+        pass
 
     def update_player(self, x, y):
         """Move autonomously"""
