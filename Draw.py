@@ -30,7 +30,7 @@ class Draw:
         # self.grid = self.gameboard.grid
 
     def draw_game(self, level, alive, saved, died, ladders,
-                  umbrellas, blockers):
+                  umbrellas, blockers, players):
         """Display the map of the game including:
         - The scoreboard
         - The platform
@@ -93,3 +93,10 @@ class Draw:
                     5, 3, self.WHITE)
         pyxel.rectb(self.exit_gate["x"], self.exit_gate["y"],
                     5, 3, self.BLACK)
+        
+        # Display players
+        for player in players:
+            x = player["x"] + player["movement"]
+            player_height = 5
+            pyxel.rect(x, player["y"] - player_height,
+                       5, player_height, self.DARK_BLUE)

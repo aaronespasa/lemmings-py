@@ -22,7 +22,7 @@ class Lemming:
         self.entry_gate = self.Platforms.entry_gate
         self.exit_gate = self.Platforms.exit_gate
 
-        Player(self.entry_gate, self.exit_gate)
+        self.Player = Player(self.entry_gate, self.exit_gate, self.platforms, self.width)
         
         # DRAW
         self.Draw = Draw(self.platforms, self.entry_gate,
@@ -46,7 +46,9 @@ class Lemming:
         ladders = 0
         umbrellas = 0
         blockers = 0
+        players = self.Player.update_player()
+        # print(players[7]["x"] + players[7]["movement"])
         self.Draw.draw_game(level, alive, saved, died, ladders,
-                            umbrellas, blockers)
+                            umbrellas, blockers, players)
 
 Lemming()
