@@ -1,5 +1,11 @@
+"""
+Player class.
+We used the library time instead of pyxel.frame_count
+because it gave us more flexibility to change the speed
+"""
 from random import randint
 import pyxel
+import time
 
 class Player:
     def __init__(self, entry_gate, exit_gate, platforms, width):
@@ -7,6 +13,9 @@ class Player:
         self.exit_gate = exit_gate
         self.platforms = platforms
         self.width = width
+        self.player_time = time.time()
+        self.player_time_y = time.time()
+        self.player_speed = 30
         self.players = self.create_players()
         
 
@@ -25,73 +34,94 @@ class Player:
             "height": 5,
             "alive": True,
             "movement": 0,
-            "direction": "right"
+            "direction": "right",
+            "falling": False
         }
 
         players_num = randint(10, 20)
         
         for i in range(players_num):
             players.append(player_stats)
-            # Create a distance of i / 2 between the lemmings
             players[i]["x_i"] = self.entry_gate["x"]
 
         return players
 
     def update_player(self):
         """Move autonomously"""
+        platform_y = 0
         for i in range(len(self.players)):
+            self.players[i]["falling"], platform_y = self.is_falling(self.players[i])
+            
+            if self.players[i]["falling"]:
+                # The player is falling
+                self.players[i]["movement"] = (
+                    time.time() - self.player_time_y) * self.player_speed
 
-            if self.players[i]["x"] == self.width - self.players[i]["width"] - 1:
+                print(self.players[i]["movement"])
+
+                self.players[i]["y"] = platform_y - self.players[i]["movement"]
+            else:
+                # The playing is not falling
+                self.x_move()
+                self.player_time_y = time.time()
+        
+        return self.players
+
+    def is_falling(self, player):
+        platform_y = 0
+        for platform in self.platforms:
+            
+            if player["y"] == platform["y"]:
+                # Set the final x of the platform
+                if platform["position"] == "right":
+                    platform_x_f = self.width
+                elif platform["position"] == "left":
+                    platform_x_f = platform["x"] + platform["width"]
+
+                player_in_platform = player["x"] >= platform["x"] and (
+                    player["x"] <= platform_x_f)
+                
+                if player_in_platform:
+                    return(False, platform_y)
+        
+        return(True, platform_y)
+
+
+    def x_move(self):
+        for i in range(len(self.players)):
+            if self.players[i]["x"] > self.width - self.players[i]["width"]:
                 # Player at the right of the window
                 self.players[i]["direction"] = "left"
                 self.players[i]["start"] = False
-                self.players[i]["movement"] = 0
-            elif self.players[i]["x"] == 0:
+                self.player_time = time.time()
+
+            elif self.players[i]["x"] < 0:
                 # Player at the left of the window
                 self.players[i]["direction"] = "right"
-                # self.players[i]["movement"] = 0
+                self.player_time = time.time()
             
             # Increase the movement in the correct direction
             if self.players[i]["direction"] == "right":
-            
-                if self.players[i]["start"] == True:
-                    # Make the movement range of the player between the width
-                    # and its initial position (the player has started the game)
-                    movement_range = self.width - self.players[i]["x_i"] - self.players[i]["width"]
-                    
-                    self.players[i]["movement"] = (pyxel.frame_count) % movement_range
-                    
+                
+                self.players[i]["movement"] = (
+                    time.time() - self.player_time) * self.player_speed
+
+                if self.players[i]["start"] == True:                    
                     self.players[i]["x"] = self.players[i]["x_i"] + self.players[i]["movement"]
                 else:
-                    # Make the movement range of the player all the width
-                    # (the player is at the left of the window)
-                    movement_range = self.width - self.players[i]["width"]
-                    
-                    self.players[i]["movement"] = (pyxel.frame_count) % movement_range
-
                     self.players[i]["x"] = self.players[i]["movement"]
+
+                # Get the final x of the player before changing its direction 
+                self.players[i]["x_f"] = self.players[i]["x"]
                 
-                # print(f"right movement: {self.players[i]['movement']}")
-                
-                self.players[i]["x_f"] = self.players[i]["movement"]
                 
             elif self.players[i]["direction"] == "left":
-                movement_range = self.width - self.players[i]["width"]
-                
-                self.players[i]["movement"] = (- pyxel.frame_count) % self.width
+                # The + 1 allows us to avoid enter on a loop
+                # because of the self.players[i]["x"] < 0 condition
+                self.players[i]["movement"] = (
+                    time.time() - self.player_time) * self.player_speed + 1
 
-                self.players[i]["x"] = self.players[i]["x_f"] + self.players[i]["movement"]
-                
-                # print(f"left movement: {self.players[i]['movement']}")
-
-            #     self.players[i]["movement"] = - (pyxel.frame_count) % (movement_range)
-                
-            #     # Update the x
-            #     self.players[i]["x"] = self.players[i]["movement"] - \
-            #         (self.players[i]["x_f"])
-                
-        
-        return self.players
+                self.players[i]["x"] = self.players[i]["x_f"] - self.players[i]["movement"]
 
     def remove_player(self):
         """Remove player if it dies.

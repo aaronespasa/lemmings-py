@@ -53,13 +53,13 @@ class Platforms:
         platforms = []
         
         # Platform at the bottom
-        platforms.append({
-            "x": 0,
-            "y": 224,
-            "width": self.width,
-            "height": self.cell_size,
-            "position": "right"
-        })
+        # platforms.append({
+        #     "x": 0,
+        #     "y": 224,
+        #     "width": self.width,
+        #     "height": self.cell_size,
+        #     "position": "right"
+        # })
 
         row_coordinates = [0]
         # The platform will be on the left or right
