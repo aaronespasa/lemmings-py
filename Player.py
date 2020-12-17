@@ -49,21 +49,22 @@ class Player:
     def update_player(self):
         """Move autonomously"""
         platform_y = 0
-        for i in range(len(self.players)):
-            self.players[i]["falling"], platform_y = self.is_falling(self.players[i])
+        self.x_move()
+        # for i in range(len(self.players)):
+        #     self.players[i]["falling"], platform_y = self.is_falling(self.players[i])
             
-            if self.players[i]["falling"]:
-                # The player is falling
-                self.players[i]["movement"] = (
-                    time.time() - self.player_time_y) * self.player_speed
+        #     if self.players[i]["falling"]:
+        #         # The player is falling
+        #         self.players[i]["movement"] = (
+        #             time.time() - self.player_time_y) * self.player_speed
 
-                print(self.players[i]["movement"])
+        #         print(self.players[i]["movement"])
 
-                self.players[i]["y"] = platform_y - self.players[i]["movement"]
-            else:
-                # The playing is not falling
-                self.x_move()
-                self.player_time_y = time.time()
+        #         self.players[i]["y"] = platform_y - self.players[i]["movement"]
+        #     else:
+        #         # The playing is not falling
+        #         self.x_move()
+        #         self.player_time_y = time.time()
         
         return self.players
 
