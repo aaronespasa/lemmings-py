@@ -5,16 +5,24 @@ from Player import Player
 from Platforms import Platforms # Platforms and gates
 from Gameboard import Gameboard # Matrix
 from Draw import Draw # Visual
+from Tools import Tools
 
 class Lemming:
     def __init__(self):
-        # time: int
-        # tools: upper stairs, down stairs, umbrella, blocker    
+        # TIME
+        self.initial_time = time.time()
+        self.click_time = self.initial_time
+        self.click_delay = 0.5 # s
 
         # DIMENSIONS
         self.Gameboard = Gameboard()
         self.width = self.Gameboard.width
         self.height = self.Gameboard.height
+        self.cell_size = self.Gameboard.cell_size
+
+        # TOOLS
+        self.grid = self.Gameboard.grid
+        self.Tools = Tools(self.grid, self.cell_size)
 
         # PLATFORMS AND GATES
         self.Platforms = Platforms()
@@ -46,9 +54,23 @@ class Lemming:
         ladders = 0
         umbrellas = 0
         blockers = 0
+
+        current_time = time.time()
+        
         players = self.Player.update_player()
-        # print(players[7]["x"] + players[7]["movement"])
-        self.Draw.draw_game(level, alive, saved, died, ladders,
-                            umbrellas, blockers, players)
+        
+        pyxel.mouse(True)
+        
+        delay_condition = time.time() - self.click_time > self.click_delay
+        if pyxel.btn(pyxel.MOUSE_LEFT_BUTTON) and delay_condition:
+            square, selected_tool = self.Tools.tool(pyxel.mouse_x, pyxel.mouse_y)
+            self.click_time = time.time()
+            
+            self.Draw.draw_game(level, alive, saved, died, ladders,
+                                umbrellas, blockers, players, square,
+                                selected_tool)
+        else:
+            self.Draw.draw_game(level, alive, saved, died, ladders,
+                                umbrellas, blockers, players)
 
 Lemming()

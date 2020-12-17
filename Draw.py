@@ -30,7 +30,7 @@ class Draw:
         # self.grid = self.gameboard.grid
 
     def draw_game(self, level, alive, saved, died, ladders,
-                  umbrellas, blockers, players):
+                  umbrellas, blockers, players, square=None, selected_tool=None):
         """Display the map of the game including:
         - The scoreboard
         - The platform
@@ -71,7 +71,7 @@ class Draw:
 
         self.scoreboard["blockers"] = f"Blockers: {blockers}"
         pyxel.text(self.scoreboard["width"] / 2 + 48, second_row_height,
-                   self.scoreboard["umbrellas"], self.scoreboard["textcolor"])
+                   self.scoreboard["blockers"], self.scoreboard["textcolor"])
 
         # # Display the grid of the game
         # for cell_num in range(len(self.grid)):
@@ -96,7 +96,10 @@ class Draw:
         
         # Display players
         for player in players:
-            x = player["x"] + player["movement"]
-            player_height = 5
-            pyxel.rect(x, player["y"] - player_height,
-                       5, player_height, self.DARK_BLUE)
+            pyxel.rect(player["x"], player["y"] - player["height"],
+                       player["width"], player["height"], self.DARK_BLUE)
+        
+        # Display tool
+        if square != None:
+            pyxel.rectb(square[0], square[1],
+                        self.cell_size, self.cell_size, self.WHITE)
