@@ -61,9 +61,11 @@ class Lemming:
         
         pyxel.mouse(True)
         
-        delay_condition = time.time() - self.click_time > self.click_delay
+        delay_condition = (time.time() - self.click_time) > self.click_delay
+        print((time.time() - self.click_time))
         if pyxel.btn(pyxel.MOUSE_LEFT_BUTTON) and delay_condition:
             square, selected_tool = self.Tools.tool(pyxel.mouse_x, pyxel.mouse_y)
+            
             self.click_time = time.time()
             
             self.Draw.draw_game(level, alive, saved, died, ladders,

@@ -35,8 +35,6 @@ class Player:
             # Create a distance of i / 2 between the lemmings
             players[i]["x_i"] = self.entry_gate["x"]
 
-            players[i]["x"] = players[i]["x_i"]
-
         return players
 
     def update_player(self):

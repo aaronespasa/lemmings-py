@@ -43,7 +43,7 @@ class Platforms:
         :return list: List with platforms_num dicts that have the x and y coordinates,
         the width and the height of the platform
         """
-        platforms_base = {
+        platforms_schema = {
             "x": 0,
             "y": 0,
             "width": 0,
@@ -51,16 +51,29 @@ class Platforms:
             "position": ""
         }
         platforms = []
+        
+        # Platform at the bottom
+        platforms.append({
+            "x": 0,
+            "y": 224,
+            "width": self.width,
+            "height": self.cell_size,
+            "position": "right"
+        })
+
         row_coordinates = [0]
         # The platform will be on the left or right
         position = ["right", "left"]
 
         for i in range(platforms_num):
-            platforms.append(platforms_base.copy())
+            platforms.append(platforms_schema.copy())
             platform_row = 0
             # platform_row cannot be repeated to avoid overlapping
             while platform_row in row_coordinates:
-                platform_row = randint(1, self.grid_rows)
+                # self.grid_rows - 1 prevents the program from
+                # putting a row underneath the platform at the bottom
+
+                platform_row = randint(1, self.grid_rows - 2)
             row_coordinates.append(platform_row)
 
             platforms[i]["position"] = position[randint(0, 1)]
