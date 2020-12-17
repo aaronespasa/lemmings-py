@@ -14,7 +14,14 @@ Then, open the location where you cloned/downloaded this repo in your computer a
 
 Have fun! ⭐
 
-## Are you interested in the steps we followed to make the project? 📄
-Visit our [Notion page](https://www.notion.so/Lemmings-project-ade052a8e29247878fadcea88e0c550f) where we explain the steps we followed!
+## Steps we followed to create the project 📄
+1. Create the designs
+(Image of the designs will be uploaded soon)
+
+2. Create the grid that the user is going to use to interact with the gameboard
+![Grid](https://github.com/aaronespasa/lemmings-py/blob/main/assets/gameboard-base.png)
+
+3. Create the platforms and the gates randomly
+![Platforms](https://github.com/aaronespasa/lemmings-py/blob/main/assets/map_example.PNG)
 
 ## Made with ♥ by [Aarón Espasandín](https://twitter.com/aaronespasa) and Ana Alejandra Castillejo
