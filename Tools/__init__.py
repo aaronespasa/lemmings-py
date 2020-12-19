@@ -2,6 +2,10 @@
 Allow the user to interact with the map
 """
 import pyxel
+from .Blocker import Blocker
+from .Stairs import Stairs
+from .Umbrella import Umbrella
+
 class Tools:
     def __init__(self, grid, cell_size):
         self.tools = {
@@ -43,5 +47,4 @@ class Tools:
             if self.grid[i][1] <= y and self.grid[i + 1][1] > y:
                 y_sq = self.grid[i][1]
 
-        print([x_sq, y_sq])
         return [x_sq, y_sq]

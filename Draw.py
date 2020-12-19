@@ -7,12 +7,13 @@ from Gameboard import Gameboard
 class Draw:
     def __init__(self, platforms, entry_gate, exit_gate):
         self.gameboard = Gameboard()
+        self.constants = self.gameboard.Constants
 
         # DIMENSIONS
-        self.width = self.gameboard.width
-        self.height = self.gameboard.height
-        self.cell_size = self.gameboard.cell_size
-        self.grid_columns = self.gameboard.grid_columns
+        self.width = self.constants.width
+        self.height = self.constants.height
+        self.cell_size = self.constants.cell_size
+        self.grid_columns = self.constants.grid_columns
 
         # COLORS
         self.BLACK = 0
@@ -26,80 +27,68 @@ class Draw:
         self.platforms = platforms
         self.entry_gate = entry_gate
         self.exit_gate = exit_gate
-        self.scoreboard = self.gameboard.scoreboard
         # self.grid = self.gameboard.grid
 
-    def draw_game(self, level, alive, saved, died, ladders,
-                  umbrellas, blockers, players, square=None, selected_tool=None):
+    def draw_game(self, scoreboard, players, user_x, user_y):
         """Display the map of the game including:
         - The scoreboard
         - The platform
         """
-        pyxel.cls(self.BLUE)
+        pyxel.cls(self.DARK_BLUE)
 
-        # Display the scoreboard
-        pyxel.rect(self.scoreboard["x"], self.scoreboard["y"],
-                   self.scoreboard["width"], self.scoreboard["height"],
-                   self.scoreboard["bgcolor"])
-
-        first_row_height = self.scoreboard["height"] / 4
-        second_row_height = self.scoreboard["height"] / 1.5
-
-        self.scoreboard["level"] = f"Level: {level}"
-        pyxel.text(5, first_row_height,
-                   self.scoreboard["level"], self.scoreboard["textcolor"])
-
-        self.scoreboard["alive"] = f"Alive: {alive}"
-        pyxel.text(self.scoreboard["width"] / 4, first_row_height,
-                   self.scoreboard["alive"], self.scoreboard["textcolor"])
-        
-        self.scoreboard["saved"] = f"Saved: {saved}"
-        pyxel.text(self.scoreboard["width"] / 2, first_row_height,
-                   self.scoreboard["saved"], self.scoreboard["textcolor"])
-
-        self.scoreboard["died"] = f"Died: {died}"
-        pyxel.text(self.scoreboard["width"] - 60, first_row_height,
-                   self.scoreboard["died"], self.scoreboard["textcolor"])
-
-        self.scoreboard["ladders"] = f"Ladders: {ladders}"
-        pyxel.text(5, second_row_height,
-                   self.scoreboard["ladders"], self.scoreboard["textcolor"])
-
-        self.scoreboard["umbrellas"] = f"Umbrellas: {umbrellas}"
-        pyxel.text(self.scoreboard["width"] / 2 - 40, second_row_height,
-                   self.scoreboard["umbrellas"], self.scoreboard["textcolor"])
-
-        self.scoreboard["blockers"] = f"Blockers: {blockers}"
-        pyxel.text(self.scoreboard["width"] / 2 + 48, second_row_height,
-                   self.scoreboard["blockers"], self.scoreboard["textcolor"])
-
-        # # Display the grid of the game
+        # # GRID
         # for cell_num in range(len(self.grid)):
         #     pyxel.rectb(self.grid[cell_num][0], self.grid[cell_num][1],
         #                 self.cell_size, self.cell_size, self.WHITE)
 
-        # Display the platform
-        for i in range(len(self.platforms)):
-            # Soil
-            pyxel.rect(self.platforms[i]["x"], self.platforms[i]["y"],
-                       self.platforms[i]["width"], self.platforms[i]["height"], self.BROWN)
-            # Grass
-            grass_size = 3
-            pyxel.rect(self.platforms[i]["x"], self.platforms[i]["y"],
-                       self.platforms[i]["width"], grass_size, self.GREEN)
+        # SCOREBOARD
+        scoreboard_text_color = 1 # Dark blue
+        scoreboard_bg_color = 7 # white
+        pyxel.rect(scoreboard.x, scoreboard.y,
+                   scoreboard.width, scoreboard.height,
+                   scoreboard_bg_color)
+
+        first_row_height = scoreboard.height / 4
+        second_row_height = scoreboard.height / 1.5
+
+        pyxel.text(5, first_row_height,
+                   scoreboard.level, scoreboard_text_color)
+
+        pyxel.text(scoreboard.width / 4, first_row_height,
+                   scoreboard.alive, scoreboard_text_color)
         
-        # Display the gates
-        pyxel.rectb(self.entry_gate["x"], self.entry_gate["y"],
-                    5, 3, self.WHITE)
-        pyxel.rectb(self.exit_gate["x"], self.exit_gate["y"],
-                    5, 3, self.BLACK)
+        pyxel.text(scoreboard.width / 2, first_row_height,
+                   scoreboard.saved, scoreboard_text_color)
+
+        pyxel.text(scoreboard.width - 60, first_row_height,
+                   scoreboard.died, scoreboard_text_color)
+
+        pyxel.text(5, second_row_height,
+                   scoreboard.ladders, scoreboard_text_color)
+
+        pyxel.text(scoreboard.width / 2 - 40, second_row_height,
+                   scoreboard.umbrellas, scoreboard_text_color)
+
+        pyxel.text(scoreboard.width / 2 + 48, second_row_height,
+                   scoreboard.blockers, scoreboard_text_color)
+
+        # PLATFORMS
+        for platform in self.platforms:
+            for i in range(int(platform.width / 16)):
+                pyxel.blt(platform.x + i * 16, platform.y, *platform.img)
         
-        # Display players
+        # ENTRY GATE
+        pyxel.blt(self.entry_gate.x, self.entry_gate.y - 
+                  self.entry_gate.entry_img[4], *self.entry_gate.entry_img)
+        # EXIT GATE
+        pyxel.blt(self.exit_gate.x, self.exit_gate.y -
+                  self.exit_gate.exit_img[4], *self.exit_gate.exit_img)
+        
+        # PLAYERS
         for player in players:
-            pyxel.rect(player["x"], player["y"] - player["height"],
-                       player["width"], player["height"], self.DARK_BLUE)
+            pyxel.blt(player.x, player.y - player.img[4], *player.img)
         
-        # Display tool
-        if square != None:
-            pyxel.rectb(square[0], square[1],
-                        self.cell_size, self.cell_size, self.WHITE)
+        # TOOLS
+        print(user_x)
+        pyxel.rectb(user_x, user_y,
+                    self.cell_size, self.cell_size, self.WHITE)

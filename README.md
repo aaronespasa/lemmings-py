@@ -10,7 +10,7 @@ Type the following pip command in your terminal to install pyxel:
 `pip install pyxel`
 
 Then, open the location where you cloned/downloaded this repo in your computer and run it by doing (Make sure you're using python 3):
-`python lemmings.py`
+`python main.py`
 
 Have fun! ⭐
 
