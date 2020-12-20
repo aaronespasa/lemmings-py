@@ -84,26 +84,78 @@ class App:
             # Place an umbrella
             tools = Tools(self.user_x, self.user_y, "umbrella")
             umbrella_x, umbrella_y, umbrella_img = tools.umbrella()
-            self.tools["umbrella"].append([umbrella_x, umbrella_y, umbrella_img])
+
+            idx, is_tool = self.same_tool_there(umbrella_x, umbrella_y, self.tools["umbrella"])
+
+            if is_tool:
+                # check if there's the same umbrella already there
+                self.tools["umbrella"].pop(idx)
+            elif not self.tool_in_tools(umbrella_x, umbrella_y):
+                self.tools["umbrella"].append([umbrella_x, umbrella_y, umbrella_img])
+
         elif pyxel.btnp(pyxel.KEY_B):
             # Place a blocker
             tools = Tools(self.user_x, self.user_y, "blocker")
             blocker_x, blocker_y, blocker_img = tools.blocker()
-            self.tools["blocker"].append([blocker_x, blocker_y, blocker_img])
+            
+            idx, is_tool = self.same_tool_there(blocker_x, blocker_y, self.tools["blocker"])
+
+            if is_tool:
+                # check if there's the same blocker already there
+                self.tools["blocker"].pop(idx)
+            elif not self.tool_in_tools(blocker_x, blocker_y):
+                self.tools["blocker"].append([blocker_x, blocker_y, blocker_img])
         elif pyxel.btnp(pyxel.KEY_R):
             # Place a right stair
             tools = Tools(self.user_x, self.user_y, "right_stair")
             right_s_x, right_s_y, right_s_right, right_s_img = tools.right_stair()
-            self.tools["right_s"].append([right_s_x, right_s_y, right_s_right, right_s_img])
+            
+            if not self.tool_in_tools(right_s_x, right_s_y):
+                self.tools["right_s"].append([right_s_x, right_s_y, right_s_right, right_s_img])
         elif pyxel.btnp(pyxel.KEY_L):
             # Place a left stair
             tools = Tools(self.user_x, self.user_y, "left_stair")
             left_s_x, left_s_y, left_s_left, left_s_img = tools.left_stair()
-            self.tools["left_s"].append([left_s_x, left_s_y, left_s_left, left_s_img])
+
+            if not self.tool_in_tools(left_s_x, left_s_y):
+                self.tools["left_s"].append([left_s_x, left_s_y, left_s_left, left_s_img])
         elif pyxel.btnp(pyxel.KEY_Q):
             # Quit the program
             pyxel.quit()
     
+    def tool_in_tools(self, tool_x, tool_y):
+        """Check if the coordinates x and y of the tools coincide
+        with some existing ones of any tool"""        
+        for umbrella in self.tools["umbrella"]:
+            # Check if it coincides with an umbrella
+            if umbrella[0] == tool_x and umbrella[1] == tool_y:
+                return True
+        for blocker in self.tools["blocker"]:
+            # Check if it coincides with a blocker
+            if blocker[0] == tool_x and blocker[1] == tool_y:
+                return True
+        for right_s in self.tools["right_s"]:
+            # Check if it coincides with a right stair
+            if right_s[0] == tool_x and right_s[1] == tool_y:
+                return True
+        for left_s in self.tools["left_s"]:
+            # Check if it coincides with a left stair
+            if left_s[0] == tool_x and left_s[1] == tool_y:
+                return True
+        return False
+    
+    def same_tool_there(self, tool_x, tool_y, tool_list):
+        """The same tool is there"""
+        is_tool = False
+        idx = 0
+        for i in range(len(tool_list)):
+            if tool_x == tool_list[i][0] and tool_y == tool_list[i][1]:
+                is_tool = True
+                idx = i
+
+        return idx, is_tool
+
+
     def update(self):
         """Updates the players and draw the game."""
         # LEMMINGS
@@ -115,8 +167,7 @@ class App:
                     # Lemming saved
                     self.saved.append(i)
                     if i in self.alive:
-                        self.alive.remove(i)
-                    
+                        self.alive.remove(i)                   
                 elif lemmings[i].alive and i not in self.alive:
                     # Lemming alive
                     self.alive.append(i)

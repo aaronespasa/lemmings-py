@@ -13,10 +13,11 @@ class Lemming:
         self.x = x
         self.y = y
         self.width = 256
-        self.lemmings_num = 5
-        self.blocker_active_idx = []
         # randint(10, 20)
+        self.lemmings_num = 3
+        self.blocker_active_idx = []
         self.players = self.create_players()
+        self.counter = [0 for i in range(self.lemmings_num)]
         self.platforms = platforms
         
     def create_players(self):
@@ -74,13 +75,27 @@ class Lemming:
                         self.blocker_active_idx.append(blocker_idx)
                     else:
                         self.change_direction(self.players[i])
+                
+                if is_touching_right_stair and self.players[i].direction == "right":
+                    self.players[i].stairs_r = True
+                elif is_touching_left_stair and self.players[i].direction == "left":
+                    self.players[i].stairs_l = True
 
                 # X MOVEMENT
                 if is_falling == False:
-                    if self.players[i].direction == "left":
+                    if self.players[i].stairs_r:
+                        self.stairs(self.players[i], i, "right")
+                    elif self.players[i].stairs_l:
+                        self.stairs(self.players[i], i, "left")
+                    elif self.players[i].direction == "left":
                         self.players[i].x -= self.players[i].speed
                     elif self.players[i].direction == "right":
                         self.players[i].x += self.players[i].speed
+                    
+                    # Avoid the lemming from having an image of umbrella
+                    # when walking
+                    self.players[i].umbrella = False
+                    self.players[i].img = (0, 32, 16, 16, 16, 0)
 
                 # Y MOVEMENT
                 if is_falling:
@@ -88,12 +103,7 @@ class Lemming:
                     
                     if is_touching_umbrella:
                         self.players[i].umbrella = True
-                
-                if is_touching_right_stair:
-                    print("Right stair")
-                
-                if is_touching_left_stair:
-                    print("Left stair")
+                        self.players[i].img = (0, 0, 48, 16, 24, 0)
                 
                 # Check if the player has died falling
                 for platform in self.platforms:
@@ -131,15 +141,16 @@ class Lemming:
                 # Set the final x of the platform
                 platform_x_f = platform.x + platform.width
 
-                player_in_platform = player.x >= platform.x and (
+                player_in_platform = player.x >= platform.x - 16 and (
                                      player.x <= platform_x_f)
 
                 if player_in_platform:
                     return False
         
-        # Check also is the user is above a stair
-        
-        return True
+        if player.stairs_r or player.stairs_l:
+            return False
+        else:
+            return True
 
     def hit_platform_by_side(self, player):
         """Check if the player is hitting a platform by its side"""
@@ -185,6 +196,21 @@ class Lemming:
             player.img = (0, 32, 56, -16, 16, 0)
         else:
             player.img = (0, 32, 56, 16, 16, 0)
+    
+    def stairs(self, player, player_idx, stairs_direction):
+        """Add functionality to the stairs"""
+        if self.counter[player_idx] < 16:
+            player.y -= 1
+            if stairs_direction == "right":
+                player.x += 1
+            elif stairs_direction == "left":
+                player.x -= 1
+            
+            self.counter[player_idx] += 1
+        else:
+            self.counter[player_idx] = 0
+            player.stairs_r = False
+            player.stairs_l = False
 
     def remove_player(self, players: list):
         """Remove player if it dies.

@@ -86,7 +86,10 @@ class Draw:
         
         # PLAYERS
         for player in players:
+            # if pyxel.frame_count % 4:
             pyxel.blt(player.x, player.y - player.img[4], *player.img)
+            # else:
+            #     pyxel.blt(player.x, player.y - player.img2[4], *player.img2)
             # pyxel.rect(player.x, player.y - 16, 1, 1, 0)
         
         # TOOLS
@@ -110,8 +113,9 @@ class Draw:
                    "Q: Quit the game", tools_color)
         
         # User cursor
-        pyxel.rectb(user_x, user_y,
-                    self.cell_size, self.cell_size, self.WHITE)
+        pyxel.blt(user_x, user_y, 0, 48, 32, 16, 16, 0)
+        # pyxel.rectb(user_x, user_y,
+        #             self.cell_size, self.cell_size, self.WHITE)
         
         # Umbrella
         if len(tools["umbrella"]) > 0:
