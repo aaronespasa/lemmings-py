@@ -18,18 +18,18 @@ class Umbrella:
 
     @x.setter
     def x(self, x):
-        if x < 0 or type(x) != int:
+        if x < 0:
             self.__x = 0
         else:
             self.__x = x
 
-    @property
-    def y(self):
-        return self.__y
+    # @property
+    # def y(self):
+    #     return self.__y
 
-    @x.setter
-    def y(self, y):
-        if y < 0 or type(y) != int:
-            self.__y = 0
-        else:
-            self.__y = y
+    # @x.setter
+    # def y(self, y):
+    #     if y < 0:
+    #         self.__y = 0
+    #     else:
+    #         self.__y = y

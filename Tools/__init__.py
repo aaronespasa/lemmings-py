@@ -7,44 +7,59 @@ from .Stairs import Stairs
 from .Umbrella import Umbrella
 
 class Tools:
-    def __init__(self, grid, cell_size):
-        self.tools = {
-            "upper_stairs": None,
-            "down_stairs": None,
-            "umbrella": None,
-            "blocker": None
-        }
-        self.grid = grid
-        self.cell_size = cell_size
+    def __init__(self, x: int, y: int, tool: "str"):
+        self.x = x
+        self.y = y
+        self.tool = tool
+
+    @property
+    def tool(self):
+        return self.__tool
     
-    def tool(self, x, y):        
-        square = self.detect_cell(x, y)
-        selected_tool = None
-        return (square, selected_tool)
+    @tool.setter
+    def tool(self, tool):
+        if tool == "umbrella":
+            self.umbrella()
+        elif tool == "blocker":
+            self.blocker()
+        elif tool == "right_stair":
+            self.right_stair()
+        elif tool == "left_stair":
+            self.left_stair()
 
-    def detect_cell(self, x, y):
-        if x >= 240 and y >= 240:
-            return [240, 240]
+    def umbrella(self):
+        """
+        Place an umbrella.
+        If the player take it when falling, it won't die.
+        """
+        umbrella = Umbrella(self.x, self.y)
+        return (umbrella.x, umbrella.y, umbrella.img)
+    
+    def blocker(self):
+        """
+        Place a blocker.
+        If a player reaches a blocker, it'll become a object
+        that will change the direction of the lemmings that touch it.
+        """
+        blocker = Blocker(self.x, self.y)
+        return (blocker.x, blocker.y, blocker.img)
+    
+    def right_stair(self):
+        """
+        Place a stair with right direction.
+        If a player reaches the right stair by the right, it will ascend
+        in the right direction.
+        If a player reaches the right stair by the left, it will go through it.
+        """
+        right_s = Stairs(self.x, self.y, "right")
+        return (right_s.x, right_s.y, right_s.right, right_s.img)
 
-        if x >= 240:
-            x_sq = 240
-            for i in range(len(self.grid)):
-                if self.grid[i][1] <= y and self.grid[i + 1][1] > y:
-                    y_sq = self.grid[i][1]
-                    return [x_sq, y_sq]
-        if y >= 240:
-            y_sq = 240
-            for i in range(len(self.grid)):
-                if self.grid[i][0] <= x and self.grid[i + 1][0] > x:
-                    x_sq = self.grid[i][0]
-                    return [x_sq, y_sq]
-
-
-        for i in range(len(self.grid)):
-            if self.grid[i][0] <= x and self.grid[i + 1][0] > x:
-                x_sq = self.grid[i][0]
-
-            if self.grid[i][1] <= y and self.grid[i + 1][1] > y:
-                y_sq = self.grid[i][1]
-
-        return [x_sq, y_sq]
+    def left_stair(self):
+        """
+        Place a stair with left direction.
+        If a player reaches the left stair by the left, it will ascend
+        in the left direction.
+        If a player reaches the left stair by the right, it will go through it.
+        """
+        left_s = Stairs(self.x, self.y, "left")
+        return (left_s.x, left_s.y, left_s.right, left_s.img)

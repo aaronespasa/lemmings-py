@@ -5,31 +5,31 @@ If another player is walking above a platform
 and finds a blocker, it changes its direction.
 """
 class Blocker:
-    def __init__(self, player_x: int, player_y: int):
-        self.player_x = player_x
-        self.player_y = player_y
+    def __init__(self, x: int, y: int):
+        self.x = x
+        self.y = y
         self.img = (0, 0, 16, 16, 16, 0)
     
     # Correct the values with a wrong data type
     # or with a negative value
-    @property
-    def player_x(self):
-        return self.__player_x
+    # @property
+    # def x(self):
+    #     return self.__x
 
-    @player_x.setter
-    def player_x(self, player_x):
-        if player_x < 0 or type(player_x) != int:
-            self.__player_x = 0
-        else:
-            self.__player_x = player_x
+    # @x.setter
+    # def x(self, x):
+    #     if x < 0 or type(x) != int:
+    #         self.__x = 0
+    #     else:
+    #         self.__x = x
 
-    @property
-    def player_y(self):
-        return self.__player_y
+    # @property
+    # def y(self):
+    #     return self.__y
 
-    @player_y.setter
-    def player_y(self, player_y):
-        if player_y < 0 or type(player_y) != int:
-            self.__player_y = 0
-        else:
-            self.__player_y = player_y
+    # @y.setter
+    # def y(self, y):
+    #     if y < 0 or type(y) != int:
+    #         self.__y = 0
+    #     else:
+    #         self.__y = y

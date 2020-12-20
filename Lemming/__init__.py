@@ -50,7 +50,7 @@ class Lemming:
                 self.player_time_y = time()
             else:
                 # IS FALLING
-                self.players[i].movement = int((time() - self.players[i].player_time_y)
+                self.players[i].movement = ((time() - self.players[i].player_time_y)
                                             * (self.players[i].speed / 2))
 
                 self.players[i].y = self.players[i].y_before_falling - 26 + self.players[i].movement
@@ -63,7 +63,7 @@ class Lemming:
         # Fall if there's not a platform underneath the player
         for platform in self.platforms:
             
-            if player.y == platform.y:
+            if int(player.y) == platform.y:
                 # Set the final x of the platform
                 platform_x_f = platform.x + platform.width
 
@@ -92,6 +92,16 @@ class Lemming:
                 # Player at the left of the window
                 self.players[i].direction = "right"
                 self.players[i].player_time_x = time()
+            
+            # If the player finds a platform, it changes
+            # its direction
+            for platform in self.platforms:
+                if (int(self.players[i].x) == platform.x and
+                   int(self.players[i].y) == platform.y):
+                    if self.players[i].direction == "right":
+                        self.players[i].direction == "left"
+                    elif self.players[i].direction == "left":
+                        self.players[i].direction == "right"
             
             # Increase the movement in the correct direction
             if self.players[i].direction == "right":

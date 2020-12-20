@@ -29,7 +29,7 @@ class Draw:
         self.exit_gate = exit_gate
         # self.grid = self.gameboard.grid
 
-    def draw_game(self, scoreboard, players, user_x, user_y):
+    def draw_game(self, scoreboard, players, user_x, user_y, tools):
         """Display the map of the game including:
         - The scoreboard
         - The platform
@@ -69,7 +69,7 @@ class Draw:
         pyxel.text(scoreboard.width / 2 - 40, second_row_height,
                    scoreboard.umbrellas, scoreboard_text_color)
 
-        pyxel.text(scoreboard.width / 2 + 48, second_row_height,
+        pyxel.text(scoreboard.width / 2 + 52, second_row_height,
                    scoreboard.blockers, scoreboard_text_color)
 
         # PLATFORMS
@@ -89,6 +89,45 @@ class Draw:
             pyxel.blt(player.x, player.y - player.img[4], *player.img)
         
         # TOOLS
-        print(user_x)
+        tools_height = 242
+        tools_color = self.WHITE
+        
+        # Menu
+        pyxel.text(5, tools_height,
+                   "U: Umbrella", tools_color)
+
+        pyxel.text(self.width / 4, tools_height,
+                   "B: Blocker", tools_color)
+
+        pyxel.text(self.width / 2 - 6, tools_height,
+                   "R: Right Stairs", tools_color)
+        
+        pyxel.text(self.width - 63, tools_height,
+                   "L: Left Stairs", tools_color)
+
+        pyxel.text(self.width / 2 - 40, tools_height + 8,
+                   "Q: Quit the game", tools_color)
+        
+        # User cursor
         pyxel.rectb(user_x, user_y,
                     self.cell_size, self.cell_size, self.WHITE)
+        
+        # Umbrella
+        if len(tools["umbrella"]) > 0:
+            for umbrella in tools["umbrella"]:
+                pyxel.blt(umbrella[0], umbrella[1], *umbrella[2])
+        
+        # Blocker
+        if len(tools["blocker"]) > 0:
+            for blocker in tools["blocker"]:
+                pyxel.blt(blocker[0], blocker[1], *blocker[2])
+        
+        # Right stair
+        if len(tools["right_s"]) > 0:
+            for right_s in tools["right_s"]:
+                pyxel.blt(right_s[0], right_s[1], *right_s[2])
+
+        # Left stair
+        if len(tools["left_s"]) > 0:
+            for left_s in tools["left_s"]:
+                pyxel.blt(left_s[0], left_s[1], *left_s[2])
