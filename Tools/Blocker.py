@@ -12,24 +12,24 @@ class Blocker:
     
     # Correct the values with a wrong data type
     # or with a negative value
-    # @property
-    # def x(self):
-    #     return self.__x
+    @property
+    def x(self):
+        return self.__x
 
-    # @x.setter
-    # def x(self, x):
-    #     if x < 0 or type(x) != int:
-    #         self.__x = 0
-    #     else:
-    #         self.__x = x
+    @x.setter
+    def x(self, x):
+        if x < 0 or type(x) != int:
+            self.__x = 0
+        else:
+            self.__x = x
 
-    # @property
-    # def y(self):
-    #     return self.__y
+    @property
+    def y(self):
+        return self.__y
 
-    # @y.setter
-    # def y(self, y):
-    #     if y < 0 or type(y) != int:
-    #         self.__y = 0
-    #     else:
-    #         self.__y = y
+    @y.setter
+    def y(self, y):
+        if y < 0 or type(y) != int:
+            self.__y = 0
+        else:
+            self.__y = y

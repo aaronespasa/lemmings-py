@@ -27,8 +27,9 @@ class App:
 
         # PLATFORMS AND GATES
         self.platforms = self.Gameboard.platforms
-        self.entry_gate = self.Gameboard.entry_gate
-        self.exit_gate = self.Gameboard.exit_gate
+        self.entry_gate= self.Gameboard.generate_gate(self.platforms)
+        self.exit_gate = self.Gameboard.generate_gate(self.platforms,
+                                    self.entry_gate.row_index, exit_gate=True)
 
         # TOOLS
         self.user_x = 0
