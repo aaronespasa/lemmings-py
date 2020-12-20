@@ -52,7 +52,7 @@ class Tools:
         If a player reaches the right stair by the left, it will go through it.
         """
         right_s = Stairs(self.x, self.y, "right")
-        return (right_s.x, right_s.y, right_s.right, right_s.img)
+        return (right_s.x, right_s.y, right_s.img, right_s.right)
 
     def left_stair(self):
         """
@@ -62,4 +62,4 @@ class Tools:
         If a player reaches the left stair by the right, it will go through it.
         """
         left_s = Stairs(self.x, self.y, "left")
-        return (left_s.x, left_s.y, left_s.right, left_s.img)
+        return (left_s.x, left_s.y, left_s.img, left_s.right)

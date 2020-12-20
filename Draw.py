@@ -34,7 +34,7 @@ class Draw:
         - The scoreboard
         - The platform
         """
-        pyxel.cls(self.DARK_BLUE)
+        pyxel.cls(5)
 
         # # GRID
         # for cell_num in range(len(self.grid)):
@@ -42,8 +42,8 @@ class Draw:
         #                 self.cell_size, self.cell_size, self.WHITE)
 
         # SCOREBOARD
-        scoreboard_text_color = 1 # Dark blue
-        scoreboard_bg_color = 7 # white
+        scoreboard_text_color = 7 # Dark blue
+        scoreboard_bg_color = 1 # white
         pyxel.rect(scoreboard.x, scoreboard.y,
                    scoreboard.width, scoreboard.height,
                    scoreboard_bg_color)
