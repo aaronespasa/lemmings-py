@@ -4,7 +4,7 @@ Scoreboard class.
 from Gameboard.Constants import Constants
 
 class Scoreboard:
-    def __init__(self, level: int = 0, alive: int = 0, saved: int = 0, died: int = 0,
+    def __init__(self, level: int = 0, alive: int = 0, saved: int = 0, dead: int = 0,
                 stairs: int = 0, umbrellas: int = 0, blockers: int = 0):
         self.constants = Constants()
         
@@ -15,7 +15,7 @@ class Scoreboard:
         self.level = f"Level: {level}"
         self.alive = f"Alive: {alive}"
         self.saved = f"Saved: {saved}"
-        self.died = f"Died: {died}"
+        self.dead = f"Dead: {dead}"
         self.ladders = f"Stairs: {stairs}"
         self.umbrellas = f"Umbrellas: {umbrellas}"
         self.blockers = f"Blockers: {blockers}"

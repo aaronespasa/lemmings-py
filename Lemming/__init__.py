@@ -13,6 +13,8 @@ class Lemming:
         self.x = x
         self.y = y
         self.width = 256
+        self.lemmings_num = 5
+        # randint(10, 20)
         self.players = self.create_players()
         self.platforms = platforms
         
@@ -22,66 +24,91 @@ class Lemming:
         and also if the player is alive."""
         players = []
 
-        # players_num = randint(10, 20)
-        
-        players_num = 1
-
-        for i in range(players_num):
+        for i in range(self.lemmings_num):
             players.append(Player(self.x, self.y))
             players[i].x_i = self.x
 
         return players
+    
+    def before_start(self):
+        return self.players
 
-    def update_player(self):
+    def update_player(self, tools):
         """Move autonomously"""
-        for i in range(len(self.players)):
-            # MAIN PLAYER PROPERTIES
-            is_falling = self.is_falling(self.players[i])
-            
-            # DIRECTION
-            # The 12 is the width of the player without any space
-            if self.players[i].x > self.width - 12:
-                # Player at the right of the window
-                self.players[i].direction = "left"
-            elif self.players[i].x < -4:
-                # Player at the left of the window
-                self.players[i].direction = "right"
+        # TOOLS
+        umbrellas = tools["umbrella"]  # [umbrella_x, umbrella_y, umbrella_img]
+        blockers = tools["blocker"]
+        right_stairs = tools["right_s"]
+        left_stairs = tools["left_s"]
 
-            # X MOVEMENT
-            if is_falling == False:
-                if self.players[i].direction == "left":
-                    self.players[i].x -= self.players[i].speed
-                elif self.players[i].direction == "right":
-                    self.players[i].x += self.players[i].speed
-            
-            # Y MOVEMENT
-            if is_falling:
-                # Add umbrella here
-                self.players[i].y += self.players[i].speed
+        players_to_remove = []
 
-            # self.players[i].falling = self.is_falling(self.players[i])
+        for i in range(len(self.players[:])):
+            if self.players[i].alive:
+                # MAIN PLAYER PROPERTIES
+                is_falling = self.is_falling(self.players[i])
+                hit_platform_by_side = self.hit_platform_by_side(self.players[i])
 
-            # if self.players[i].falling == False:
-            #     # IS NOT FALLING
-            #     # The player is not falling by default, so this conditional
-            #     # will be initially satisfied and the variables player_time_y
-            #     # and self.players[i].y_before_falling will be assigned
-            #     for platform in self.platforms:
-            #         if self.players[i].y == platform.y:
-            #             self.players[i].y_before_falling = platform.y
+                is_touching_umbrella, umbrella_idx = self.is_touching_tool(self.players[i], umbrellas)
+                is_touching_blocker, blocker_idx = self.is_touching_tool(self.players[i], blockers)
+                is_touching_right_stair, right_stair_idx = self.is_touching_tool(self.players[i], right_stairs)
+                is_touching_left_stair, left_stair_idx = self.is_touching_tool(self.players[i], left_stairs)
+
+                # DIRECTION
+                # The 12 is the width of the player without any space
+                if self.players[i].x > self.width - 12:
+                    # Player at the right of the window
+                    self.players[i].direction = "left"
+                elif self.players[i].x < -4:
+                    # Player at the left of the window
+                    self.players[i].direction = "right"
+                elif hit_platform_by_side and is_falling == False:
+                    # Player has collided with a platform
+                    self.change_direction(self.players[i])
+                elif is_touching_blocker and is_falling == False:
+                    # Player has collided with a blocker
+                    self.change_direction(self.players[i])
+
+                # X MOVEMENT
+                if is_falling == False:
+                    if self.players[i].direction == "left":
+                        self.players[i].x -= self.players[i].speed
+                    elif self.players[i].direction == "right":
+                        self.players[i].x += self.players[i].speed
+
+                # Y MOVEMENT
+                if is_falling:
+                    self.players[i].y += self.players[i].speed * 2
+                    
+                    if is_touching_umbrella:
+                        self.players[i].umbrella = True
                 
-            #     self.x_move(self.players[i])
-            #     self.player_time_y = time()
-            #     self.players[i].time_x_bef_falling = time()
-            # else:
-            #     # IS FALLING
-            #     self.players[i].movement = ((time() - self.players[i].player_time_y)
-            #                                 * (self.players[i].speed / 2))
+                if is_touching_right_stair:
+                    print("Right stair")
+                
+                if is_touching_left_stair:
+                    print("Left stair")
+                
+                # Check if the player has died falling
+                for platform in self.platforms:
+                    if self.players[i].y == platform.y:
+                        # Set the final x of the platform
+                        platform_x_f = platform.x + platform.width
 
-            #     self.players[i].y = self.players[i].y_before_falling - 26 + self.players[i].movement
+                        player_in_platform = self.players[i].x >= platform.x and (
+                                             self.players[i].x <= platform_x_f)
+                        
+                        if is_falling and player_in_platform and self.players[i].umbrella == False:
+                            players_to_remove.append(i)
 
-            #     self.players[i].time_x_falling = time() - self.players[i].time_x_bef_falling
+
+                # Check if the player has dead going underneath the window
+                if self.players[i].y > 255:
+                    players_to_remove.append(i)
         
+        if len(players_to_remove) >= 1:
+            self.remove_player(players_to_remove)
+                
         return self.players
 
     def is_falling(self, player):
@@ -89,6 +116,8 @@ class Lemming:
         # Fall if there's not a platform underneath the player
         for platform in self.platforms:
             
+            # If self.players[i].speed is a flot, change player.y
+            # by int(player.y)
             if player.y == platform.y:
                 # Set the final x of the platform
                 platform_x_f = platform.x + platform.width
@@ -103,59 +132,52 @@ class Lemming:
         
         return True
 
+    def hit_platform_by_side(self, player):
+        """Check if the player is hitting a platform by its side"""
+        is_hitting_platform = False
 
-    def x_move(self, player):
-        """Movement on the x axis"""
+        for platform in self.platforms:
+            x_equal = player.x == platform.x or \
+                      player.x == platform.x + platform.width
+            y_equal = player.y - 16 == platform.y
+
+            if (x_equal and y_equal):
+                is_hitting_platform = True
+        
+        return is_hitting_platform
+    
+    def is_touching_tool(self, player, tool):
+        """Check if the player is in contact with a tool
+        :return: (bool, tool_index)
+        """
+        is_touching = False
+        tool_index = 0
+
+        for i in range(len(tool)):
+            x_near_tool = player.x > tool[i][0] - 2 and player.x < tool[i][0] + 2
+            if x_near_tool and player.y - 16 == tool[i][1]:
+                is_touching = True
+                tool_index = i
+        
+        return (is_touching, tool_index)
+    
+    def change_direction(self, player):
+        """Change the direction of the player"""
+        if player.direction == "right":
+            player.direction = "left"
+        elif player.direction == "left":
+            player.direction = "right"
+
+    def convert_in_blocker(self, player):
+        """Convert the player into a blocker"""
         pass
-        # The 10 is the width of the player without any space
-        # if player.x > self.width - 10:
-        #     # Player at the right of the window
-        #     player.direction = "left"
-        #     player.start = False
-        #     player.player_time_x = time()
 
-        # elif player.x < 0:
-        #     # Player at the left of the window
-        #     player.direction = "right"
-        #     player.player_time_x = time()
-        
-        # # If the player finds a platform, it changes
-        # # its direction
-        # for platform in self.platforms:
-        #     if (int(player.x) == platform.x and
-        #         int(player.y) == platform.y):
-        #         if player.direction == "right":
-        #             player.direction == "left"
-        #         elif player.direction == "left":
-        #             player.direction == "right"
-        
-        # # Increase the movement in the correct direction
-        # if player.direction == "right":
-            
-        #     player.movement = ((
-        #         time() - (player.player_time_x + player.time_x_falling))
-        #         * player.speed)
-
-        #     if player.start == True:        
-        #         player.x = player.x_i + player.movement
-        #     else:
-        #         player.x = player.movement
-        
-                            
-        #     # Get the final x of the player before changing its direction 
-        #     player.x_f = player.x
-            
-        # elif player.direction == "left":
-        #     # The + 1 allows us to avoid enter on a loop
-        #     # because of the player["x"] < 0 condition
-        #     player.movement = (
-        #         time() - player.player_time_x) * player.speed + 1
-
-        #     player.x = player.x_f - player.movement
-
-    def remove_player(self):
+    def remove_player(self, players: list):
         """Remove player if it dies.
         It can die if:
         - Falls more than one square (16px) without an umbrella
         """
-        pass
+        for i in players:
+            self.players[i].alive = False
+            self.players[i].img = (0, 32, 40, 16, 12, 0) # dead img
+            

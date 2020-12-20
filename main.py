@@ -13,6 +13,7 @@ class App:
         # GAME: MAIN VARIABLES
         self.initial_time = time()
         self.level = 0
+        self.start = False
 
         # GAMEBOARD
         self.Gameboard = Gameboard()
@@ -43,10 +44,11 @@ class App:
         }
 
         # LEMMING
-        self.alive = 0
-        self.saved = 0
-        self.died = 0
+        self.alive = []
+        self.saved = []
+        self.dead = []
         self.Lemming = Lemming(self.entry_gate.x, self.entry_gate.y, self.platforms)
+        self.lemmings_num = self.Lemming.lemmings_num
         
         # DRAW
         self.Draw = Draw(self.platforms, self.entry_gate,
@@ -64,7 +66,9 @@ class App:
         """Allows the user to interact with the grid to place tools in the map.
         This function also add the option to quit the program by pressing Q.
         """
-        if pyxel.btnp(pyxel.KEY_LEFT) and self.user_x > 0:
+        if pyxel.btnp(pyxel.KEY_SPACE):
+            self.start = True
+        elif pyxel.btnp(pyxel.KEY_LEFT) and self.user_x > 0:
             # Move to the left
             self.user_x -= self.cursor_displacement
         elif pyxel.btnp(pyxel.KEY_RIGHT) and self.user_x < self.width - 16:
@@ -103,17 +107,41 @@ class App:
     def update(self):
         """Updates the players and draw the game."""
         # LEMMINGS
-        lemmings = self.Lemming.update_player()
-
+        if self.start == True:
+            lemmings = self.Lemming.update_player(self.tools)
+        
+            for i in range(len(lemmings)):
+                if lemmings[i].saved and i not in self.saved:
+                    # Lemming saved
+                    self.saved.append(i)
+                    if i in self.alive:
+                        self.alive.remove(i)
+                    
+                elif lemmings[i].alive and i not in self.alive:
+                    # Lemming alive
+                    self.alive.append(i)
+                elif lemmings[i].alive == False and i not in self.dead:
+                    # Lemming dead
+                    self.dead.append(i)
+                    if i in self.alive:
+                        self.alive.remove(i)
+            
         # SCOREBOARD
+        total_alive = len(self.alive)
+        total_saved = len(self.saved)
+        total_dead = len(self.dead)
         total_stairs = len(self.tools["right_s"]) + len(self.tools["left_s"])
         total_umbrellas = len(self.tools["umbrella"])
         total_blockers = len(self.tools["blocker"])
-        self.scoreboard = Scoreboard(self.level, self.alive, self.saved, self.died,
+        self.scoreboard = Scoreboard(self.level, total_alive, total_saved, total_dead,
                                      total_stairs, total_umbrellas, total_blockers)
 
         # DRAW
-        self.Draw.draw_game(self.scoreboard, lemmings,
-                            self.user_x, self.user_y, self.tools)
+        if self.start:
+            self.Draw.draw_game(self.scoreboard, lemmings,
+                                self.user_x, self.user_y, self.tools, self.start)
+        else:
+            self.Draw.draw_game(self.scoreboard, self.Lemming.before_start(),
+                                self.user_x, self.user_y, self.tools, self.start)
 
 App()

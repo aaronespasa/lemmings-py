@@ -23,7 +23,7 @@ class Umbrella:
         else:
             self.__x = x
 
-#    # @property
+    # @property
     # def y(self):
     #     return self.__y
 

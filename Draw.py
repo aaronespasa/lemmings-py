@@ -29,7 +29,7 @@ class Draw:
         self.exit_gate = exit_gate
         # self.grid = self.gameboard.grid
 
-    def draw_game(self, scoreboard, players, user_x, user_y, tools):
+    def draw_game(self, scoreboard, players, user_x, user_y, tools, start):
         """Display the map of the game including:
         - The scoreboard
         - The platform
@@ -61,7 +61,7 @@ class Draw:
                    scoreboard.saved, scoreboard_text_color)
 
         pyxel.text(scoreboard.width - 60, first_row_height,
-                   scoreboard.died, scoreboard_text_color)
+                   scoreboard.dead, scoreboard_text_color)
 
         pyxel.text(5, second_row_height,
                    scoreboard.ladders, scoreboard_text_color)
@@ -87,6 +87,7 @@ class Draw:
         # PLAYERS
         for player in players:
             pyxel.blt(player.x, player.y - player.img[4], *player.img)
+            # pyxel.rect(player.x, player.y - 16, 1, 1, 0)
         
         # TOOLS
         tools_height = 242
