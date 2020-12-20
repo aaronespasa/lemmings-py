@@ -120,8 +120,16 @@ class Draw:
         
         # Blocker
         if len(tools["blocker"]) > 0:
-            for blocker in tools["blocker"]:
-                pyxel.blt(blocker[0], blocker[1], *blocker[2])
+            for i in range(len(tools["blocker"])):
+                player_with_i = False
+
+                for player in players:
+                    if player.blocker_idx == i:
+                        player_with_i = True
+                
+                if not player_with_i:
+                    pyxel.blt(tools["blocker"][i][0],
+                            tools["blocker"][i][1], *tools["blocker"][i][2])
         
         # Right stair
         if len(tools["right_s"]) > 0:

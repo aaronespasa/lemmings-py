@@ -14,6 +14,7 @@ class Lemming:
         self.y = y
         self.width = 256
         self.lemmings_num = 5
+        self.blocker_active_idx = []
         # randint(10, 20)
         self.players = self.create_players()
         self.platforms = platforms
@@ -44,7 +45,7 @@ class Lemming:
         players_to_remove = []
 
         for i in range(len(self.players[:])):
-            if self.players[i].alive:
+            if self.players[i].alive and not self.players[i].blocker:
                 # MAIN PLAYER PROPERTIES
                 is_falling = self.is_falling(self.players[i])
                 hit_platform_by_side = self.hit_platform_by_side(self.players[i])
@@ -67,7 +68,12 @@ class Lemming:
                     self.change_direction(self.players[i])
                 elif is_touching_blocker and is_falling == False:
                     # Player has collided with a blocker
-                    self.change_direction(self.players[i])
+                    # if first_time
+                    if blocker_idx not in self.blocker_active_idx:
+                        self.convert_into_blocker(self.players[i], blocker_idx)
+                        self.blocker_active_idx.append(blocker_idx)
+                    else:
+                        self.change_direction(self.players[i])
 
                 # X MOVEMENT
                 if is_falling == False:
@@ -78,7 +84,7 @@ class Lemming:
 
                 # Y MOVEMENT
                 if is_falling:
-                    self.players[i].y += self.players[i].speed * 2
+                    self.players[i].y += self.players[i].speed
                     
                     if is_touching_umbrella:
                         self.players[i].umbrella = True
@@ -105,6 +111,9 @@ class Lemming:
                 # Check if the player has dead going underneath the window
                 if self.players[i].y > 255:
                     players_to_remove.append(i)
+            
+            elif self.players[i].blocker:
+                pass
         
         if len(players_to_remove) >= 1:
             self.remove_player(players_to_remove)
@@ -168,9 +177,14 @@ class Lemming:
         elif player.direction == "left":
             player.direction = "right"
 
-    def convert_in_blocker(self, player):
+    def convert_into_blocker(self, player, blocker_idx):
         """Convert the player into a blocker"""
-        pass
+        player.blocker = True
+        player.blocker_idx = blocker_idx
+        if player.direction == "right":
+            player.img = (0, 32, 56, -16, 16, 0)
+        else:
+            player.img = (0, 32, 56, 16, 16, 0)
 
     def remove_player(self, players: list):
         """Remove player if it dies.

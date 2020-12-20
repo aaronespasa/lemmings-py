@@ -13,6 +13,7 @@ class Player:
         self.falling = False
         self.umbrella = False
         self.blocker = False
+        self.blocker_idx = None
         self.speed = 1  # Default speed (1px)
 
         self.img = (0, 32, 16, 16, 16, 0)
