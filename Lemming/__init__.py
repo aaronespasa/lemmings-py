@@ -46,7 +46,9 @@ class Lemming:
         players_to_remove = []
 
         for i in range(len(self.players[:])):
-            if self.players[i].alive and not self.players[i].blocker:
+            if (self.players[i].alive and
+                not self.players[i].blocker and
+                not self.players[i].saved):
                 # MAIN PLAYER PROPERTIES
                 is_falling = self.is_falling(self.players[i])
                 hit_platform_by_side = self.hit_platform_by_side(self.players[i])
@@ -141,7 +143,7 @@ class Lemming:
                 # Set the final x of the platform
                 platform_x_f = platform.x + platform.width
 
-                player_in_platform = player.x >= platform.x - 16 and (
+                player_in_platform = player.x >= platform.x - 12 and (
                                      player.x <= platform_x_f)
 
                 if player_in_platform:

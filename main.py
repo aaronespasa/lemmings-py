@@ -14,6 +14,7 @@ class App:
         self.initial_time = time()
         self.level = 0
         self.start = False
+        self.game_over = [False, ""]
 
         # GAMEBOARD
         self.Gameboard = Gameboard()
@@ -67,6 +68,7 @@ class App:
         This function also add the option to quit the program by pressing Q.
         """
         if pyxel.btnp(pyxel.KEY_SPACE):
+            # Start the game
             self.start = True
         elif pyxel.btnp(pyxel.KEY_LEFT) and self.user_x > 0:
             # Move to the left
@@ -159,11 +161,13 @@ class App:
     def update(self):
         """Updates the players and draw the game."""
         # LEMMINGS
-        if self.start == True:
+        if self.start and not self.game_over[0]:
             lemmings = self.Lemming.update_player(self.tools)
         
             for i in range(len(lemmings)):
-                if lemmings[i].saved and i not in self.saved:
+                if (lemmings[i].x == self.exit_gate.x and
+                    lemmings[i].y == self.exit_gate.y and
+                    i not in self.saved):
                     # Lemming saved
                     self.saved.append(i)
                     if i in self.alive:
@@ -176,6 +180,13 @@ class App:
                     self.dead.append(i)
                     if i in self.alive:
                         self.alive.remove(i)
+        
+        if len(self.saved) == self.lemmings_num:
+            self.game_over[0] = True
+            self.game_over[1] = "win"
+        elif len(self.dead) == self.lemmings_num:
+            self.game_over[0] = True
+            self.game_over[1] = "lose"
             
         # SCOREBOARD
         total_alive = len(self.alive)
@@ -188,7 +199,10 @@ class App:
                                      total_stairs, total_umbrellas, total_blockers)
 
         # DRAW
-        if self.start:
+        if self.start and self.game_over[0]:
+            self.Draw.draw_game(self.scoreboard, self.Lemming.before_start(),
+                                self.user_x, self.user_y, self.tools, self.start, self.game_over[1])
+        elif self.start:
             self.Draw.draw_game(self.scoreboard, lemmings,
                                 self.user_x, self.user_y, self.tools, self.start)
         else:

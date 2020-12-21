@@ -29,7 +29,7 @@ class Draw:
         self.exit_gate = exit_gate
         # self.grid = self.gameboard.grid
 
-    def draw_game(self, scoreboard, players, user_x, user_y, tools, start):
+    def draw_game(self, scoreboard, players, user_x, user_y, tools, start, game_over_msg=None):
         """Display the map of the game including:
         - The scoreboard
         - The platform
@@ -76,13 +76,17 @@ class Draw:
         for platform in self.platforms:
             for i in range(int(platform.width / 16)):
                 pyxel.blt(platform.x + i * 16, platform.y, *platform.img)
+                pyxel.rect(platform.x + i * 16, platform.y, 1, 1, 0)
         
         # ENTRY GATE
         pyxel.blt(self.entry_gate.x, self.entry_gate.y - 
                   self.entry_gate.entry_img[4], *self.entry_gate.entry_img)
+        pyxel.rect(self.entry_gate.x, self.entry_gate.y, 1, 1, 0)
+
         # EXIT GATE
         pyxel.blt(self.exit_gate.x, self.exit_gate.y -
                   self.exit_gate.exit_img[4], *self.exit_gate.exit_img)
+        pyxel.rect(self.exit_gate.x, self.exit_gate.y, 1, 1, 0)
         
         # PLAYERS
         for player in players:
@@ -90,7 +94,7 @@ class Draw:
             pyxel.blt(player.x, player.y - player.img[4], *player.img)
             # else:
             #     pyxel.blt(player.x, player.y - player.img2[4], *player.img2)
-            # pyxel.rect(player.x, player.y - 16, 1, 1, 0)
+            pyxel.rect(player.x, player.y, 1, 1, 0)
         
         # TOOLS
         tools_height = 242
@@ -144,3 +148,17 @@ class Draw:
         if len(tools["left_s"]) > 0:
             for left_s in tools["left_s"]:
                 pyxel.blt(left_s[0], left_s[1], *left_s[2])
+        
+        if start == False:
+            pyxel.rect(scoreboard.x, scoreboard.y,
+                       scoreboard.width, scoreboard.height,
+                       self.WHITE)
+            pyxel.text(90, 15, "Press SPACE to start!", self.BLACK)
+        
+        if game_over_msg != None:
+            pyxel.rect(0, 0, self.width, self.height, self.WHITE)
+
+            if game_over_msg == "win":
+                pyxel.text(110, 120, "CONGRATULATIONS!", self.BLACK)
+            elif game_over_msg == "lose":
+                pyxel.text(110, 120, "GAME OVER", self.BLACK)
